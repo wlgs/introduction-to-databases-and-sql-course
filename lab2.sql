@@ -1,7 +1,4 @@
---totalny chaos zaraz po zmianie prowadzacego dlatego to ten .sql nie jest az tak zorganizowany sadge ;-(
-
-
--- SKILL CHECK BY ZYGMUNT GAMING
+--
 USE library
 SELECT title
 FROM title
@@ -185,7 +182,7 @@ SELECT (SELECT TOP 1 UnitPrice
 
 -- 4. Wypisz informację o wszystkich produktach o cenie
 -- powyżej średniej
---najpierw liczymy xddxdxdx
+--
 
 SELECT AVG(UnitPrice)
 FROM Products;
@@ -224,7 +221,7 @@ GROUP BY OrderID;
 -- 3. Podaj liczbę zamówień dostarczanych przez
 -- poszczególnych spedytorów
 
-SELECT ShipVia, COUNT(OrderId) as no_orders
+SELECT ShipVia, COUNT(*) as no_orders
 FROM Orders
 GROUP BY ShipVia
 
@@ -240,10 +237,23 @@ ORDER BY no_orders DESC
 -- 1. Wyświetl zamówienia dla których liczba pozycji
 -- zamówienia jest większa niż 5
 
-SELECT orderid, COUNT(orderid) as number
+
+
+
+
+
+SELECT orderid, COUNT(*) as 'total orders'
 FROM [Order Details]
 GROUP BY orderid
-HAVING COUNT(OrderID)>5
+HAVING COUNT(*)>5
+
+
+
+
+
+
+
+
 
 -- 2. Wyświetl klientów, dla których w 1998 roku zrealizowano
 -- więcej niż 8 zamówień (wyniki posortuj malejąco wg
@@ -259,11 +269,121 @@ GROUP BY CustomerID
 HAVING COUNT(Orders.OrderID)>8
 ORDER BY 'total sum' DESC;
 
--- ??
+-- apparently freight = oplata za przewoz XDDD
+-- freight z ang. = załadunek XDDDDD
 
-SELECT Orders.CustomerID, COUNT(Orders.OrderID) as 'total orders'
-FROM Orders
+SELECT CustomerID, SUM((UnitPrice * Quantity * (1 - Discount))) as 'totalsum'
+FROM Orders, [Order Details]
 WHERE YEAR(ShippedDate)=1998
 GROUP BY CustomerID
 HAVING COUNT(Orders.OrderID)>8
+ORDER BY totalsum DESC;
+
+
+
+
+
+
+SELECT productid, orderid, sum(quantity)
+FROM orderhist
+GROUP BY productid, orderid WITH CUBE
+ORDER BY productid, orderid
+
+
+SELECT '<null>', '<null>',sum(quantity)
+FROM orderhist
+
+
+SELECT productid, sum(quantity)
+FROM orderhist
+WHERE ProductID=1 --2
+GROUP BY productid
+
+
+
+--ZADANIE AGREGATY KONCOWE
+
+
+
+
+
+
+
+
+
+
+SELECT FirstName + ' ' +  LastName, DATEDIFF(year, HireDate, GETDATE())
+FROM Employees
+
+
+
+
+
+SELECT MIN(LEN(FirstName))
+FROM Employees
+
+
+
+
+
+
+
+
+SELECT EmployeeID, COUNT(*), MIN(OrderDate)
+FROM Orders
+GROUP BY EmployeeID
+ORDER BY EmployeeID
+
+
+
+
+
+
+
+
+SELECT CustomerID, SUM(Freight)
+FROM Orders
+WHERE RequiredDate - ShippedDate < 0
+GROUP BY CustomerID
+
+
+
+
+
+
+USE Library
+SELECT TOP 1 YEAR(in_date),SUM(fine_assessed)
+FROM loanhist
+GROUP BY YEAR(in_date)
+ORDER BY SUM(fine_assessed) DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
