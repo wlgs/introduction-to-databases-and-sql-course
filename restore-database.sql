@@ -1,4 +1,3 @@
-
 RESTORE DATABASE joindb
 FROM DISK = 'C:\Users\WLGS\Desktop\joindb2012.bak'
 WITH REPLACE
