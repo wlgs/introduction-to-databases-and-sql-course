@@ -2,24 +2,24 @@
 USE library
 SELECT title
 FROM title
-WHERE title_no=10;
+WHERE title_no = 10;
 
 USE library
 SELECT member_no
 FROM loanhist
-WHERE isnull(fine_assessed,0) > isnull(fine_paid,0) + isnull(fine_waived,0)
+WHERE isnull(fine_assessed, 0) > isnull(fine_paid, 0) + isnull(fine_waived, 0)
 
 USE library
 SELECT DISTINCT city, state
 FROM adult
 
 USE library
-SELECT (lower(firstname +  middleinitial + substring(lastname,1,2))) AS 'email_name'
+SELECT (lower(firstname + middleinitial + substring(lastname, 1, 2))) AS 'email_name'
 FROM member
 WHERE lastname = 'Anderson';
 
 USE Northwind
-SELECT (UnitPrice * Quantity * (1- Discount)) as 'wartosc'
+SELECT (UnitPrice * Quantity * (1 - Discount)) as 'wartosc'
 FROM [Order Details]
 WHERE OrderID = 10250;
 
@@ -63,7 +63,8 @@ WHERE fine_assessed BETWEEN 8 AND 9
 USE library
 SELECT title_no, author
 FROM title
-WHERE author='Charles Dickens' or author='Jane Austen'
+WHERE author = 'Charles Dickens'
+   or author = 'Jane Austen'
 
 --5. Napisz polecenie, które wybiera numer tytułu i tytuł dla wszystkich rekordów zawierających string „adventures” gdzieś w tytule
 
@@ -77,7 +78,7 @@ WHERE title LIKE '%adventures%'
 USE library
 SELECT member_no, fine_assessed, fine_paid
 FROM loanhist
-WHERE fine_paid=0
+WHERE fine_paid = 0
 
 --7. Napisz polecenie, które wybiera wszystkie unikalne pary miast i stanów z tablicy adult.
 USE library
@@ -102,8 +103,9 @@ ORDER BY title ASC;
 USE library
 SELECT member_no, isbn, sum(fine_assessed) as 'total fines', fine_assessed * 2 as 'double fine'
 FROM loanhist
-WHERE fine_assessed IS NOT NULL AND fine_assessed!=0
-GROUP BY member_no, isbn , fine_assessed
+WHERE fine_assessed IS NOT NULL
+  AND fine_assessed != 0
+GROUP BY member_no, isbn, fine_assessed
 
 --3. Napisz polecenie, które generuje pojedynczą kolumnę, która zawiera kolumny: imię
 --członka biblioteki, inicjał drugiego imienia i nazwisko dla
@@ -117,9 +119,9 @@ GROUP BY member_no, isbn , fine_assessed
 -- wykorzystaj operator (+) do połączenia stringów.
 
 USE library
-SELECT LOWER(firstname + middleinitial + substring(lastname,1,2)) as 'email_name'
+SELECT LOWER(firstname + middleinitial + substring(lastname, 1, 2)) as 'email_name'
 FROM member
-WHERE lastname='Anderson'
+WHERE lastname = 'Anderson'
 
 --4. Napisz polecenie, które wybiera title i title_no z tablicy
 -- title. Wynikiem powinna być pojedyncza kolumna o formacie jak w
@@ -148,19 +150,18 @@ USE Northwind
 
 SELECT COUNT(ProductID) as 'Count'
 FROM Products
-WHERE UnitPrice<10 or UnitPrice<20;
-
+WHERE UnitPrice < 10
+   or UnitPrice < 20;
 
 
 
 -- 2. Podaj maksymalną cenę produktu dla produktów o cenach
 -- poniżej 20$
 
-SELECT TOP 1 ProductName,UnitPrice
+SELECT TOP 1 ProductName, UnitPrice
 FROM Products
-WHERE UnitPrice<20
+WHERE UnitPrice < 20
 ORDER BY UnitPrice DESC;
-
 
 
 
@@ -171,11 +172,11 @@ ORDER BY UnitPrice DESC;
 SELECT (SELECT TOP 1 UnitPrice
         FROM Products
         WHERE QuantityPerUnit LIKE '%bottle%'
-        ORDER BY UnitPrice DESC) as 'max price',
+        ORDER BY UnitPrice DESC)               as 'max price',
        (SELECT TOP 1 UnitPrice
         FROM Products
-       WHERE QuantityPerUnit LIKE '%bottle%'
-        ORDER BY UnitPrice ) as 'min price',
+        WHERE QuantityPerUnit LIKE '%bottle%'
+        ORDER BY UnitPrice)                    as 'min price',
        (SELECT AVG(UnitPrice)
         FROM Products
         WHERE QuantityPerUnit LIKE '%bottle%') as 'avg price';
@@ -194,7 +195,7 @@ WHERE UnitPrice > 28.8663;
 -- 5. Podaj wartość zamówienia o numerze 10250
 SELECT SUM((UnitPrice * Quantity * (1 - Discount)))
 FROM [Order Details]
-WHERE OrderID=10250;
+WHERE OrderID = 10250;
 
 -- ćwiczenie kolejne
 
@@ -228,8 +229,8 @@ GROUP BY ShipVia
 -- 4. Który ze spedytorów był najaktywniejszy w 1997 roku?
 SELECT Shippers.CompanyName, COUNT(OrderId) as no_orders
 FROM Orders
-INNER JOIN Shippers ON ShipperID = Orders.ShipVia
-WHERE YEAR(OrderDate)=1997
+         INNER JOIN Shippers ON ShipperID = Orders.ShipVia
+WHERE YEAR(OrderDate) = 1997
 GROUP BY Shippers.CompanyName
 ORDER BY no_orders DESC
 
@@ -238,21 +239,10 @@ ORDER BY no_orders DESC
 -- zamówienia jest większa niż 5
 
 
-
-
-
-
 SELECT orderid, COUNT(*) as 'total orders'
 FROM [Order Details]
 GROUP BY orderid
-HAVING COUNT(*)>5
-
-
-
-
-
-
-
+HAVING COUNT(*) > 5
 
 
 -- 2. Wyświetl klientów, dla których w 1998 roku zrealizowano
@@ -261,72 +251,55 @@ HAVING COUNT(*)>5
 -- klientów)
 
 
-SELECT Orders.CustomerID, COUNT(Orders.OrderID) as 'total orders', SUM((UnitPrice * Quantity * (1 - Discount))) as 'total sum'
+SELECT Orders.CustomerID,
+       COUNT(Orders.OrderID)                        as 'total orders',
+       SUM((UnitPrice * Quantity * (1 - Discount))) as 'total sum'
 FROM Orders
-INNER JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID
-WHERE YEAR(ShippedDate)=1998
+         INNER JOIN [Order Details] ON Orders.OrderID = [Order Details].OrderID
+WHERE YEAR(ShippedDate) = 1998
 GROUP BY CustomerID
-HAVING COUNT(Orders.OrderID)>8
+HAVING COUNT(Orders.OrderID) > 8
 ORDER BY 'total sum' DESC;
 
 -- apparently freight = oplata za przewoz XDDD
 -- freight z ang. = załadunek XDDDDD
 
 SELECT CustomerID, SUM((UnitPrice * Quantity * (1 - Discount))) as 'totalsum'
-FROM Orders, [Order Details]
-WHERE YEAR(ShippedDate)=1998
+FROM Orders,
+     [Order Details]
+WHERE YEAR(ShippedDate) = 1998
 GROUP BY CustomerID
-HAVING COUNT(Orders.OrderID)>8
+HAVING COUNT(Orders.OrderID) > 8
 ORDER BY totalsum DESC;
-
-
-
 
 
 
 SELECT productid, orderid, sum(quantity)
 FROM orderhist
-GROUP BY productid, orderid WITH CUBE
+GROUP BY productid, orderid
+WITH CUBE
 ORDER BY productid, orderid
 
 
-SELECT '<null>', '<null>',sum(quantity)
+SELECT '<null>', '<null>', sum(quantity)
 FROM orderhist
 
 
 SELECT productid, sum(quantity)
 FROM orderhist
-WHERE ProductID=1 --2
+WHERE ProductID = 1 --2
 GROUP BY productid
-
 
 
 --ZADANIE AGREGATY KONCOWE
 
 
-
-
-
-
-
-
-
-
-SELECT FirstName + ' ' +  LastName, DATEDIFF(year, HireDate, GETDATE())
+SELECT FirstName + ' ' + LastName, DATEDIFF(year, HireDate, GETDATE())
 FROM Employees
-
-
-
 
 
 SELECT MIN(LEN(FirstName))
 FROM Employees
-
-
-
-
-
-
 
 
 SELECT EmployeeID, COUNT(*), MIN(OrderDate)
@@ -335,55 +308,14 @@ GROUP BY EmployeeID
 ORDER BY EmployeeID
 
 
-
-
-
-
-
-
 SELECT CustomerID, SUM(Freight)
 FROM Orders
 WHERE RequiredDate - ShippedDate < 0
 GROUP BY CustomerID
 
 
-
-
-
-
 USE Library
-SELECT TOP 1 YEAR(in_date),SUM(fine_assessed)
+SELECT TOP 1 YEAR(in_date), SUM(fine_assessed)
 FROM loanhist
 GROUP BY YEAR(in_date)
 ORDER BY SUM(fine_assessed) DESC;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
